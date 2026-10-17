@@ -1,0 +1,142 @@
+GAMEFINDER JAVASCRIPT - BEGINNER GUIDE
+======================================
+
+This guide explains what script.js does in simple terms. The JavaScript works
+with home.html. It finds HTML elements, listens for user actions, and updates
+the game list on the page.
+
+1. GAME DATA
+------------
+
+The games array stores all games. Each game is an object with:
+- name: the game's title
+- genres: an array of genre names
+- price: a number in Thai baht
+- playtime: a number of hours
+- pic: an image value; the cards currently show a blank image placeholder
+
+Example:
+{
+  name: "Example Game",
+  genres: ["RPG", "Action"],
+  price: 250,
+  playtime: 12,
+  pic: ""
+}
+
+Square brackets hold a list. Curly brackets hold the details for one game.
+
+2. FINDING PAGE ELEMENTS
+------------------------
+
+At the top of script.js, document.getElementById() and
+document.querySelector() find buttons, inputs, dialogs, and lists from
+home.html. Saving these elements in variables lets the rest of the code use
+them without searching the page again.
+
+Most of these variables use const because the variable keeps pointing to the
+same page element. gamePendingRemoval uses let because its value changes when
+the user chooses a game to remove.
+
+3. createTextElement(tagName, className, text)
+----------------------------------------------
+
+This helper makes a new HTML element. For example, it can make a heading,
+paragraph, or button. It gives the element a CSS class and some text, then
+returns the finished element so another function can put it on the page.
+
+4. createGameCard(game)
+-----------------------
+
+This function receives one game object and builds one game card:
+1. It creates a list item for the card.
+2. It adds a blank area where game artwork can go.
+3. It adds the game name and makes a small list item for each genre.
+4. It shows the price and playtime.
+5. It adds an Unfavorite button.
+
+Clicking Unfavorite saves that game as the game to remove and opens a
+confirmation dialog. The game is not removed until the user confirms.
+The function returns the completed card.
+
+5. renderGames(gamesToRender)
+-----------------------------
+
+This function receives a list of games to show. It first clears the old cards.
+Then it goes through the supplied games one by one, asks createGameCard() to
+make a card for each one, and adds each card to the page.
+
+When the page first opens, renderGames(games) displays every game.
+
+6. renderGenreNav()
+-------------------
+
+This function builds the genre buttons in the sidebar using the current game
+data. Set removes repeated genre names, and sort puts the names in alphabetical
+order.
+
+The All games button clears the search and shows every game. A genre button
+puts that genre into the search box, refreshes the cards, and closes the
+sidebar. The menu is rebuilt when a game is added or removed, so it stays up to
+date.
+
+7. filterGames()
+----------------
+
+This function reads the search box and the sort dropdown.
+
+For the genre search, it removes extra spaces and ignores uppercase versus
+lowercase letters. It keeps games where at least one genre contains the search
+text. If the search box is empty, it starts with all games.
+
+If Price is selected, it sorts prices from highest to lowest. If Playtime is
+selected, it sorts hours from highest to lowest. Finally, it calls
+renderGames() to replace the cards with the results.
+
+The Submit button runs this function after a search. Changing the sort dropdown
+also runs it. The sidebar's genre buttons call it too.
+
+8. ADDING A GAME
+----------------
+
+Clicking the plus button resets and opens the add-game form, then puts the
+cursor in the name field. Cancel closes the form without changing the games.
+
+When the form is submitted:
+1. preventDefault() stops the browser from reloading the page.
+2. The genre text is split at commas. trim() removes spaces around each name,
+	and filter(Boolean) skips empty entries.
+3. The form checks that at least one genre was entered.
+4. The field values are put into a new game object. Number() turns the price
+	and playtime text into numbers, which lets sorting compare them correctly.
+5. The new object is added to games with push(). The search is cleared, the
+	cards and genre menu are refreshed, and the form closes.
+
+For example, entering "RPG, Action" makes the genres array ["RPG", "Action"].
+
+9. REMOVING A GAME
+------------------
+
+The Cancel button in the unfavorite dialog only closes the dialog.
+
+The Remove game button finds the selected game in the games array. If it is
+there, splice() removes it. Then the genre menu and game cards are refreshed.
+Closing the dialog also clears the saved game selection. Pressing Escape closes
+the native dialog without removing the game.
+
+10. SIDEBAR
+-----------
+
+Clicking the menu button adds an active CSS class to the sidebar and dark
+overlay, which makes them visible. Clicking the close button or the overlay
+runs closeSidebar(). That function removes the active classes and hides them.
+
+JAVASCRIPT WORDS USED HERE
+--------------------------
+
+- Function: a named set of steps that can be run when needed.
+- Parameter: a value given to a function, such as game in createGameCard(game).
+- Array: an ordered list of values, written with square brackets.
+- Object: a group of named values, written with curly brackets.
+- Event listener: code that waits for an action such as a click or form submit.
+- return: sends a value back from a function to the code that called it.
